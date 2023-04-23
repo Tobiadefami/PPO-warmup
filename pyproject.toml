@@ -2,7 +2,7 @@
 name = "ppo-warmup"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"]
+authors = ["tobiadefami <tobiadefami@gmail.com>", "madisonmay <madison@indico.io>"]
 license = "MIT"
 readme = "README.md"
 packages = [{include = "ppo_warmup"}]
