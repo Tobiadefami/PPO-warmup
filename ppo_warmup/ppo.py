@@ -182,8 +182,8 @@ class PPO(OnPolicyAlgorithm):
         Returns:
             th.Tensor of shape (trajectory_length,): normalized advantages
         """
-        return (advantages - advantages.mean()) / (advantages.std() + 1e-8)
-    
+        pass
+
     def compute_ratio(self, old_log_prob, new_log_prob):
         """
         Ratio of new policies computed log prob of selected action to 
@@ -196,7 +196,7 @@ class PPO(OnPolicyAlgorithm):
         Returns:
             th.Tensor: shape (trajectory_length,)
         """
-        return th.exp(new_log_prob - old_log_prob)
+        pass
     
     def compute_policy_loss(self, advantages: th.Tensor, ratio: th.Tensor, clip_range: float):
         """
@@ -210,10 +210,7 @@ class PPO(OnPolicyAlgorithm):
         Returns:
             th.Tensor: policy loss of shape (1,)
         """
-        policy_loss_1 = advantages * ratio
-        policy_loss_2 = advantages * th.clamp(ratio, 1 - clip_range, 1 + clip_range)
-        policy_loss = -th.min(policy_loss_1, policy_loss_2).mean()
-        return policy_loss
+        pass
     
     def compute_value_loss(self, returns: th.Tensor, values_pred: th.Tensor):
         """
@@ -226,7 +223,7 @@ class PPO(OnPolicyAlgorithm):
         Returns:
             th.Tensor: shape (1,) 
         """
-        return F.mse_loss(returns, values_pred)
+        pass
     
     def compute_entropy_loss(self, entropy):
         """
@@ -238,7 +235,7 @@ class PPO(OnPolicyAlgorithm):
         Returns:
             th.Tensor: shape (1,)
         """
-        return -th.mean(entropy)
+        pass
     
     def train(self) -> None:
         """
