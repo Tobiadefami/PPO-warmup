@@ -53,7 +53,6 @@ class RolloutBuffer(BaseBuffer):
         self.reset()
 
     def reset(self) -> None:
-
         self.observations = np.zeros((self.buffer_size, self.n_envs) + self.obs_shape, dtype=np.float32)
         self.actions = np.zeros((self.buffer_size, self.n_envs, self.action_dim), dtype=np.float32)
         self.rewards = np.zeros((self.buffer_size, self.n_envs), dtype=np.float32)
@@ -95,7 +94,7 @@ class RolloutBuffer(BaseBuffer):
         self.gamma: float, discount factor
         self.gae_lambda: float, GAE lambda
 
-        NOTE: fill in these variables
+        NOTE: fill in these variables using https://arxiv.org/pdf/1506.02438.pdf as a reference
         self.advantages: np.ndarray of shape (self.buffer_size, n_envs), a.k.a. A(s), pre-initialized + to be filled in by user
         self.returns: np.ndarray of shape (self.buffer_size, n_envs) to be set by the user (not initialized to anything)
         """
