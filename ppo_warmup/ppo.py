@@ -172,22 +172,72 @@ class PPO(OnPolicyAlgorithm):
 
             self.clip_range_vf = get_schedule_fn(self.clip_range_vf)
 
-    def normalize_advantages(self, advantages):
+    def normalize_advantages(self, advantages: th.Tensor):
+        """
+        Whitening advantages
+
+        Args:
+            advantages (th.Tensor): shape (trajectory_length,)
+
+        Returns:
+            th.Tensor of shape (trajectory_length,): normalized advantages
+        """
         return (advantages - advantages.mean()) / (advantages.std() + 1e-8)
     
     def compute_ratio(self, old_log_prob, new_log_prob):
+        """
+        Ratio of new policies computed log prob of selected action to 
+        old policies computed log prob of selected action
+
+        Args:
+            old_log_prob (th.Tensor): shape (trajectory_length,)
+            new_log_prob (th.Tensor): shape (trajectory_length,)
+
+        Returns:
+            th.Tensor: shape (trajectory_length,)
+        """
         return th.exp(new_log_prob - old_log_prob)
     
-    def compute_policy_loss(self, advantages, ratio, clip_range):
+    def compute_policy_loss(self, advantages: th.Tensor, ratio: th.Tensor, clip_range: float):
+        """
+        Compute policy loss given advantages, ratio and clip range
+
+        Args:
+            advantages (th.Tensor): (trajectory_length,)
+            ratio (th.Tensor): log prob ratio of shape (trajectory_length,)
+            clip_range (float): e.g. 0.2
+
+        Returns:
+            th.Tensor: policy loss of shape (1,)
+        """
         policy_loss_1 = advantages * ratio
         policy_loss_2 = advantages * th.clamp(ratio, 1 - clip_range, 1 + clip_range)
         policy_loss = -th.min(policy_loss_1, policy_loss_2).mean()
         return policy_loss
     
-    def compute_value_loss(self, returns, values_pred):
+    def compute_value_loss(self, returns: th.Tensor, values_pred: th.Tensor):
+        """
+        Compute value loss based on how well value_pred matches returns
+
+        Args:
+            returns (th.Tensor): shape (trajectory_length,)
+            values_pred (th.Tensor): shape (trajectory_length,)
+
+        Returns:
+            th.Tensor: shape (1,) 
+        """
         return F.mse_loss(returns, values_pred)
     
     def compute_entropy_loss(self, entropy):
+        """
+        Don't overthink this one
+
+        Args:
+            entropy (th.Tensor): shape (trajectory_length,)
+
+        Returns:
+            th.Tensor: shape (1,)
+        """
         return -th.mean(entropy)
     
     def train(self) -> None:

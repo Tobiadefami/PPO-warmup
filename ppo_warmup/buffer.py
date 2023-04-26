@@ -85,15 +85,19 @@ class RolloutBuffer(BaseBuffer):
         :param dones: if the last step was a terminal step (one bool for each env).
 
         NOTE: Use these variables:
-        self.buffer_size 
-        self.values
-        self.episode_starts
-        self.advantages
-        self.rewards
-        self.gamma
-        self.gae_lambda
+        n_envs: int, number of parallel environments
+        last_values: th.Tensor of shape (n_envs, 1), V(s) at end of trajectory
+        dones: th.Tensor of shape (n_envs,), True if last step was a terminal state, False otherwise 
+        self.buffer_size: int, max episode length, multiple episodes may be present in a single buffer
+        self.episode_starts: np.ndarray of shape (self.buffer_size, n_envs), 1 if the beginning of the episode
+        self.values: np.ndarray of shape (self.buffer_size, n_envs), a.k.a. V(s), already initialized to the output of the value function
+        self.rewards: np.ndarray of shape (self.buffer_size, n_envs), pre-computed
+        self.gamma: float, discount factor
+        self.gae_lambda: float, GAE lambda
 
-        TODO: figure out where advantages are computed so we can write that too
+        NOTE: fill in these variables
+        self.advantages: np.ndarray of shape (self.buffer_size, n_envs), a.k.a. A(s), pre-initialized + to be filled in by user
+        self.returns: np.ndarray of shape (self.buffer_size, n_envs) to be set by the user (not initialized to anything)
         """
         # Convert to numpy
         last_values = last_values.clone().cpu().numpy().flatten()
